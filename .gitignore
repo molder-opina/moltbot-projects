@@ -1,0 +1,29 @@
+# Archivos temporales
+*.tmp
+*.log
+.DS_Store
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Datos locales
+.memory/
+.fizzy/
+*.json
+
+# OS
+Thumbs.db
+.DS_Store
