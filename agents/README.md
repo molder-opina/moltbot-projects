@@ -1,94 +1,41 @@
 # 🤖 Moltbot Agents Collection
 
-Sistema completo de agentes AI con prioridad: **Cloud Free → Local Fallback**
+Sistema de agentes con **solo los modelos que ya tienes configurados**.
 
-## 📊 Arquitectura
+## ✅ Agentes Configurados
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    SOLICITUD                            │
-└─────────────────────────────────────────────────────────┘
-                          │
-                          ▼
-┌─────────────────────────────────────────────────────────┐
-│              CLOUD FREE AGENTS (PRIORIDAD)              │
-├─────────────────────────────────────────────────────────┤
-│ 1. OpenCode MiniMax     │ Consultas rápidas             │
-│ 2. Google Gemini        │ Razonamiento                  │
-│ 3. Groq (LLaMA, Mistral)│ Modelos ultra-rápidos         │
-│ 4. HuggingFace          │ Modelos open source           │
-└─────────────────────────────────────────────────────────┘
-                          │
-                          ▼ (Fallback)
-┌─────────────────────────────────────────────────────────┐
-│              LOCAL AGENTS (OFFLINE)                      │
-├─────────────────────────────────────────────────────────┤
-│ 5. Ollama               │ Modelos locales                │
-│ 6. LM Studio            │ Modelos personalizados         │
-└─────────────────────────────────────────────────────────┘
-```
+| # | Agente | Provider | Estado | Mejor Para |
+|---|--------|----------|--------|------------|
+| 1 | **MiniMax** | OpenCode (cloud) | ✅ Siempre disponible | Consultas rápidas |
+| 2 | Llama 3.1 8B | Ollama Local | ⚠️ Requiere Ollama | General purpose |
+| 3 | Qwen 2.5 14B | Ollama Local | ⚠️ Requiere Ollama | Razonamiento |
+| 4 | Qwen 2.5 Coder | Ollama Local | ⚠️ Requiere Ollama | Código |
+| 5 | Ministral 3 8B | Ollama Local | ⚠️ Requiere Ollama | Efficient inference |
+| 6 | LM Studio | LM Studio Local | ⚠️ Requiere LM Studio | Modelos personalizados |
 
 ## 📁 Estructura
 
 ```
 agents/
-├── __init__.py                    # Package exports
-├── README.md                      # Esta documentación
-├── cloud_free_registry.py         # Registro de agentes
-├── cloud_free_agents.py          # Factory de agentes
-├── multi_provider_agent.py       # CLI tool
-├── minimax_agent.py              # OpenCode MiniMax
-├── ollama_agent.py               # Ollama local
-└── lmstudio_agent.py             # LM Studio local
+├── __init__.py          # Package exports
+├── README.md            # Esta documentación
+├── registry.py          # Registro de agentes
+├── agents.py            # Factory de agentes
+└── agent_cli.py         # CLI tool
 ```
 
-## 🚀 Uso Rápido
-
-### 1. Listar agentes disponibles
+## 🚀 Uso CLI
 
 ```bash
-python3 agents/multi_provider_agent.py --list
+# Ver estado de servicios
+python3 agents/agent_cli.py --status
+
+# Usar agente específico
+python3 agents/agent_cli.py -u minimax -t "Hola"
+
+# Auto-seleccionar
+python3 agents/agent_cli.py -A -t "Escribe código Python"
 ```
-
-### 2. Ejecutar con agente específico
-
-```bash
-python3 agents/multi_provider_agent.py -a opencode-minimax -t "Hola, ¿cómo estás?"
-```
-
-### 3. Auto-seleccionar mejor agente
-
-```bash
-python3 agents/multi_provider_agent.py -A -t "Escribe código Python" --type code
-```
-
-### 4. Ver prioridad de agentes
-
-```bash
-python3 agents/multi_provider_agent.py --priority
-```
-
-## 📋 Agentes Cloud Free
-
-| # | Agente | Provider | Mejor Para |
-|---|--------|----------|------------|
-| 1 | MiniMax | OpenCode | Consultas rápidas |
-| 2 | Gemini 1.5 Flash | Google | Razonamiento, multimedia |
-| 3 | Gemini 1.0 Pro | Google | Código, matemáticas |
-| 4 | Groq LLaMA 3.1 70B | Groq | Inference rápida |
-| 5 | Groq LLaMA 3 8B | Groq | Tareas ligeras |
-| 6 | Groq Mistral 7B | Groq | Instrucciones |
-| 7 | Groq Gemma 2 9B | Groq | Análisis |
-| 8 | HuggingFace Zephyr | HF | Chat general |
-| 9 | HuggingFace Mistral | HF | Código |
-
-## 🏠 Agentes Locales (Fallback)
-
-| # | Agente | Modelo | Mejor Para |
-|---|--------|--------|------------|
-| 1 | Ollama Llama 3.1 8B | llama3.1:8b | General |
-| 2 | Ollama Qwen Coder 7B | qwen2.5-coder | Código |
-| 3 | Ollama Qwen 14B | qwen2.5:14b | Razonamiento |
 
 ## 🔧 Uso Programático
 
@@ -96,55 +43,43 @@ python3 agents/multi_provider_agent.py --priority
 from agents import (
     create_agent,
     get_best_agent_for_task,
-    get_fallback_agent
+    show_status
 )
+
+# Ver estado
+show_status()
 
 # Crear agente específico
-agent = create_agent("opencode-minimax")
+agent = create_agent("minimax")       # Cloud gratuito
+agent = create_agent("ollama-coder")  # Local código
 
-# Auto-seleccionar para tarea
-agent = get_best_agent_for_task("code")
-
-# Usar con CrewAI
-from crewai import Crew, Task
-
-crew = Crew(
-    agents=[agent],
-    tasks=[Task(description="Tu tarea", agent=agent)]
-)
-
-result = crew.kickoff()
+# Auto-seleccionar
+agent = get_best_agent_for_task("code")  # Usa el mejor para código
 ```
 
-## ⚙️ Configuración de API Keys
+## ⚙️ Requisitos
 
-Para agentes cloud, configura las variables de entorno:
+- **MiniMax**: Sin requisitos (cloud gratuito)
+- **Ollama**: `ollama serve` en localhost:11434
+- **LM Studio**: LM Studio corriendo en localhost:1234
+
+## 📊 Estado de Servicios
 
 ```bash
-# Google Gemini
-export GOOGLE_API_KEY="tu-key"
-
-# Groq
-export GROQ_API_KEY="tu-key"
-
-# HuggingFace
-export HF_API_KEY="tu-key"
+python3 agents/agent_cli.py --status
 ```
 
-Los agentes locales (Ollama, LM Studio) no requieren API keys.
+Muestra:
+- ✅ OpenCode (MiniMax) - siempre disponible
+- ⚠️ Ollama Local - verifica si está corriendo
+- ⚠️ LM Studio - verifica si está corriendo
 
-## 🎯 Sistema de Prioridad
+## 🎯 Prioridad de Uso
 
-El sistema intenta usar agentes cloud primero:
+1. **MiniMax** (cloud) → Consultas simples
+2. **Ollama** (local) → Fallback offline
+3. **LM Studio** (local) → Modelos personalizados
 
-1. **OpenCode MiniMax** → Consultas simples
-2. **Google Gemini** → Razonamiento complejo
-3. **Groq** → Inferencia rápida
-4. **HuggingFace** → Modelos open source
-5. **Ollama Local** → Fallback offline
-6. **LM Studio** → Fallback personalizado
+## 📚 Repo
 
-## 📚 Recursos
-
-- Repo: https://github.com/molder-opina/moltbot-projects
-- Docs: Ver `cloud_free_registry.py` para información detallada
+https://github.com/molder-opina/moltbot-projects

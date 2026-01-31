@@ -1,52 +1,59 @@
 # Moltbot Agents Package
-# Sistema de agentes con prioridad: Cloud Free → Local Fallback
+# Solo agentes que ya tienes configurados y funcionando
 
-from cloud_free_registry import (
+from registry import (
     # Registry
-    CLOUD_FREE_AGENTS,
-    LOCAL_AGENTS,
-    AgentInfo,
-    Priority,
-    AgentType,
+    CONFIGURED_AGENTS,
     get_cloud_agent,
-    get_fallback_agent,
-    get_all_cloud_agents,
-    print_agent_registry
+    get_ollama_agents,
+    get_agent_by_task,
+    check_services,
+    print_status,
+    LOCAL_CONFIGS
 )
 
-from cloud_free_agents import (
+from agents import (
     # Factory
     create_agent,
-    create_agent_by_model,
-    create_opencode_minimax_agent,
-    create_gemini_agent,
-    create_groq_agent,
-    create_huggingface_agent,
-    create_local_agent,
+    create_minimax_agent,
+    create_ollama_agent,
+    create_ollama_coder,
+    create_ollama_llama,
+    create_ollama_qwen14b,
+    create_lmstudio_agent,
     get_best_agent_for_task,
-    example_usage
+    show_status,
+    list_agents
+)
+
+from agent_cli import (
+    run_with_agent,
+    run_auto
 )
 
 __all__ = [
     # Registry
-    "CLOUD_FREE_AGENTS",
-    "LOCAL_AGENTS", 
-    "AgentInfo",
-    "Priority",
-    "AgentType",
+    "CONFIGURED_AGENTS",
     "get_cloud_agent",
-    "get_fallback_agent",
-    "get_all_cloud_agents",
-    "print_agent_registry",
+    "get_ollama_agents",
+    "get_agent_by_task",
+    "check_services",
+    "print_status",
+    "LOCAL_CONFIGS",
     
     # Factory
     "create_agent",
-    "create_agent_by_model",
-    "create_opencode_minimax_agent",
-    "create_gemini_agent",
-    "create_groq_agent",
-    "create_huggingface_agent",
-    "create_local_agent",
+    "create_minimax_agent",
+    "create_ollama_agent",
+    "create_ollama_coder",
+    "create_ollama_llama",
+    "create_ollama_qwen14b",
+    "create_lmstudio_agent",
     "get_best_agent_for_task",
-    "example_usage"
+    "show_status",
+    "list_agents",
+    
+    # CLI
+    "run_with_agent",
+    "run_auto"
 ]
